@@ -4,7 +4,7 @@ import logging
 from de_redshift_tips.custom_formatter_logger import CustomFormatter
 from redshift_connector import connect, Connection
 from boto3 import client
-
+import pg8000 as pg
 
 def get_logger(logger: logging.Logger = None) -> logging.Logger:
     if logger is None:
@@ -26,6 +26,16 @@ def get_logger(logger: logging.Logger = None) -> logging.Logger:
 
 def redshift_open_connection(host: str, port: int, database: str, user: str, password: str) -> Connection:
     conn = connect(
+        host=host,
+        database=database,
+        user=user,
+        password=password,
+        port=port
+    )
+    return conn
+
+def redshift_pg8000_open_connection(host: str, port: int, database: str, user: str, password: str) -> Connection:
+    conn = pg.connect(
         host=host,
         database=database,
         user=user,
@@ -69,6 +79,19 @@ def redshift_open_connection_by_glue(glue_client: client, glue_connection_name: 
         conn_param['password']
     )
 
+def redshift_pg8000_open_connection_by_glue(glue_client: client, glue_connection_name: str) -> Connection:
+    logger = logging.getLogger()
+    conn_param = get_connection_glue(glue_client, glue_connection_name)
+    logger.debug(f'Openning connection by glue params')
+
+    return redshift_pg8000_open_connection(
+        conn_param['hostname'],
+        conn_param['port'],
+        conn_param['database'],
+        conn_param['user'],
+        conn_param['password']
+    )
+
 def redshift_get_rows_result_query(glue_client: client, glue_connection_name: str, str_query: str) -> list:
     logger = logging.getLogger()
     conn = redshift_open_connection_by_glue(glue_client, glue_connection_name)
@@ -90,6 +113,16 @@ def redshift_get_rows_result_query(glue_client: client, glue_connection_name: st
 def redshift_exec_query_with_commit(glue_client: client, glue_connection_name: str, str_query: str):
     logger = logging.getLogger()
     conn = redshift_open_connection_by_glue(glue_client, glue_connection_name)
+    cur = conn.cursor()
+    logger.debug(f'Executing query with commit')
+    cur.execute(str_query)
+    conn.commit()
+    cur.close()
+    cur.close()
+
+def redshift_pg8000_exec_query_with_commit(glue_client: client, glue_connection_name: str, str_query: str):
+    logger = logging.getLogger()
+    conn = redshift_pg8000_open_connection_by_glue(glue_client, glue_connection_name)
     cur = conn.cursor()
     logger.debug(f'Executing query with commit')
     cur.execute(str_query)
