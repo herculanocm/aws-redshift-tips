@@ -129,3 +129,20 @@ def redshift_pg8000_exec_query_with_commit(glue_client: client, glue_connection_
     conn.commit()
     cur.close()
     cur.close()
+
+def redshift_pg8000_get_rows_result_query(glue_client: client, glue_connection_name: str, str_query: str) -> list:
+    logger = logging.getLogger()
+    conn = redshift_pg8000_open_connection_by_glue(glue_client, glue_connection_name)
+    cur = conn.cursor()
+    
+    logger.debug(f'Executing query')
+    result = []
+    cur.execute(str_query)
+    cols = [a[0] for a in cur.description]
+    for row in cur.fetchall():
+        result.append({a: b for a,b in zip(cols, row)})
+                
+    cur.close()
+    cur.close()
+    
+    return result
