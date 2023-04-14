@@ -66,35 +66,41 @@ def get_connection_glue(glue_client: client, glue_connection_name: str) -> Dict:
     return conn_param
 
 
-def redshift_open_connection_by_glue(glue_client: client, glue_connection_name: str) -> Connection:
+def redshift_open_connection_by_glue(glue_client: client, glue_connection_name: str, database: str = None) -> Connection:
     logger = logging.getLogger()
     conn_param = get_connection_glue(glue_client, glue_connection_name)
     logger.debug(f'Openning connection by glue params')
+
+    if database is None:
+        database = conn_param['database']
 
     return redshift_open_connection(
         conn_param['hostname'],
         conn_param['port'],
-        conn_param['database'],
+        database,
         conn_param['user'],
         conn_param['password']
     )
 
-def redshift_pg8000_open_connection_by_glue(glue_client: client, glue_connection_name: str) -> Connection:
+def redshift_pg8000_open_connection_by_glue(glue_client: client, glue_connection_name: str, database: str = None) -> Connection:
     logger = logging.getLogger()
     conn_param = get_connection_glue(glue_client, glue_connection_name)
     logger.debug(f'Openning connection by glue params')
 
+    if database is None:
+        database = conn_param['database']
+
     return redshift_pg8000_open_connection(
         conn_param['hostname'],
         conn_param['port'],
-        conn_param['database'],
+        database,
         conn_param['user'],
         conn_param['password']
     )
 
-def redshift_get_rows_result_query(glue_client: client, glue_connection_name: str, str_query: str) -> list:
+def redshift_get_rows_result_query(glue_client: client, glue_connection_name: str, str_query: str, database: str = None) -> list:
     logger = logging.getLogger()
-    conn = redshift_open_connection_by_glue(glue_client, glue_connection_name)
+    conn = redshift_open_connection_by_glue(glue_client, glue_connection_name, database)
     conn.autocommit = False
     cur = conn.cursor()
     
@@ -110,9 +116,9 @@ def redshift_get_rows_result_query(glue_client: client, glue_connection_name: st
     
     return result
 
-def redshift_exec_query_with_commit(glue_client: client, glue_connection_name: str, str_query: str):
+def redshift_exec_query_with_commit(glue_client: client, glue_connection_name: str, str_query: str, database: str = None):
     logger = logging.getLogger()
-    conn = redshift_open_connection_by_glue(glue_client, glue_connection_name)
+    conn = redshift_open_connection_by_glue(glue_client, glue_connection_name, database)
     cur = conn.cursor()
     logger.debug(f'Executing query with commit')
     cur.execute(str_query)
@@ -120,9 +126,9 @@ def redshift_exec_query_with_commit(glue_client: client, glue_connection_name: s
     cur.close()
     cur.close()
 
-def redshift_pg8000_exec_query_with_commit(glue_client: client, glue_connection_name: str, str_query: str):
+def redshift_pg8000_exec_query_with_commit(glue_client: client, glue_connection_name: str, str_query: str, database: str = None):
     logger = logging.getLogger()
-    conn = redshift_pg8000_open_connection_by_glue(glue_client, glue_connection_name)
+    conn = redshift_pg8000_open_connection_by_glue(glue_client, glue_connection_name, database)
     cur = conn.cursor()
     logger.debug(f'Executing query with commit')
     cur.execute(str_query)
@@ -130,9 +136,9 @@ def redshift_pg8000_exec_query_with_commit(glue_client: client, glue_connection_
     cur.close()
     cur.close()
 
-def redshift_pg8000_get_rows_result_query(glue_client: client, glue_connection_name: str, str_query: str) -> list:
+def redshift_pg8000_get_rows_result_query(glue_client: client, glue_connection_name: str, str_query: str, database: str = None) -> list:
     logger = logging.getLogger()
-    conn = redshift_pg8000_open_connection_by_glue(glue_client, glue_connection_name)
+    conn = redshift_pg8000_open_connection_by_glue(glue_client, glue_connection_name, database)
     cur = conn.cursor()
     
     logger.debug(f'Executing query')

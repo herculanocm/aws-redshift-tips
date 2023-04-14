@@ -17,10 +17,13 @@ if __name__ == "__main__":
     # print(newList)
 
  
-  
-    aws_access_key_id='ASIAS34UIATUKKIMXT4L'
-    aws_secret_access_key='ttoDwLWQLk+RwEq/W0PM/RSiI/QHTRcxdQGBwJi+'
-    aws_session_token='IQoJb3JpZ2luX2VjECkaCXNhLWVhc3QtMSJHMEUCIHhfSTrIpHmw02tMu389b8eUZAsT92yuO4vQ/pw64HeyAiEA0Jpn8OaYpS4UmeJGUPykhWzgxgOlI1Cu5K9ziExuv3gqsQMI8v//////////ARACGgwxOTczNDI1Mjg3NDQiDNSPWpJghUxG6mTSByqFA/ywG5qWTBq9i4X1ElTeMahfTTnR/hoefmbaAWaVD5GrFYUu7rCaMsdh7iySLRG+21ux2rbzZKKQ3BbuCRLHxKQ0Lb6eRxjV1n+wnXEIJOVJ9uvI0DrhgRfezAZZwBau7++KFzwymu2b3J14dYQjdoUJn9S0+ObHTiNK9K3CO9NIFaAUMFi19PDLViwXheLXnyXncGpQ/yTDMRo1oftKhcsUaqYrBR8sUYWtrjqcbEv2BHD6M1PjVWpR7FoX4cgIMEJIBgbiuGnGA6OHRSh4k0dI82dzMDoctCpUFPnGO1lQLDsITPe+aXwJEiJUrEmg4rxDQfVeOkRSkLXBrTgNwsuSEcAgYAu7qwgtLqWb4N9KfyabWWGSP4ioA0ZukYCu+DIQ+xhPXEwFrkfKGg2ruCi9a3W3dMQu7KKUuKz5cdZ+BdkJ++eBt7lz4eJEnrDUXP1sr3p0L1lXxerQNeoSWi158qcAHdJ9kiqnhG/T43SjKQBQ8c0fi1QC5KkcW7l3N1vf0+J+MK7P/KAGOqYBxx6eJWmkSY6HVuaNGw58/cW5THHKeacZ4L5Uqsz1K6oeCvfc+Ry/sOhd5bGkF+Zy6oJ/06jLIQtxuGjUESeBsvweOg1tpfL00KpfTQMohByY1Q+vAKp9Cmqr10mhhel2QX7KaGeWULR51CxKslL1mZqNWMuf+4j8mE9DhB7Qr7Yu8fgF/G+JPmFigygIT6qMQA88f3tX9ziuMPJtygLpnB90aZ7Nmw=='
+    
+
+
+    aws_access_key_id='ASIAS34UIATUMVOFDSMX'
+    aws_secret_access_key='54VGeTPDImQeBMPoq69Acyqro+XVCRlIBh00HcH9'
+    aws_session_token='IQoJb3JpZ2luX2VjEAYaCXNhLWVhc3QtMSJHMEUCIQC7MsrkssKXOLCc9oZYexAX0bfm5X1hGnPcei4a3q5+hwIgEljY4M+AmSO38S13MRSe4c/mkd8ZQZPsggSB2hVCREMqrQMI7///////////ARACGgwxOTczNDI1Mjg3NDQiDKPVLU+fX2DU7Np8PyqBAzXpqjVJS3Z9U4SdQw29E9+JwGeD4JoKRmomZh+aAWiu2Bx/PywbSu1y+jFrrStQIv56OHZOsGbx9RYRHfxf05ZZsUeh6yr+PvjExBBVYJ6mO+Xl0r9PidJtLhTKQcnJgc+wF5V9jC1mm803H8Vfj9Vq638ZeaAid1HU8NF9RChki4JRPlgC8w4qTEaKConcSYhKeAgW0sOelscBKKYxcemUU6irUjFH7K1PbFeRe83hfDD+7k80+ZWMPWbBR/lp/COyTmeKymmbcfSMKxiHZ4ETzyFTLBnzmAQUGaH0gUFfilcFHcviTd+9RWkpNcwvS5TvgTxxm8LqarmX2GBWN3JDPy9TR1Mm+1nkKCzH/LYNk73y2hEBkaPUT2J8bKjjx+kaR+yjKUzaZfJE0fx46pCuQRt3Poz5G1FF8CSzvOdoRxxmVWNJZwpZuhLuB2/rYylnWNxm0I8Qt75GxJvBUSJaABx7F0jptodid/ZPY4/oaY5piAPq/0Hoy1yyV4KQHRowrcDloQY6pgF+ItGcrf1QPS1Crm1N4i/8o4MWHrd/e529EI0+0JN8bNFybM6Hvrh2V5+lVWeRjG4Y6gLBB8uX8LhQWGJM/pYMIegnrEo3nQawlQlNLx+QjSheaj4OuZMuoiM9j4r0rnxZ/ZoCDeCd5EpjAQEsMMyqmOCEMvtwlPnogFNk9uR/EfhLJhQsRuQHOqFUL4PgKOWg5wsO6lzo8SQbFHtV3+PpjufAGeDY'
+        
     
     s3_client = aws_client(
         "s3",
@@ -37,7 +40,12 @@ if __name__ == "__main__":
         region_name='sa-east-1'
     )
 
-    result = reshift_functions.redshift_get_rows_result_query(glue_client, 'asgard-redshift-production-trusted-owner','select * from captalys_trusted.britech_britech_buscacliente limit 5')
-    print(type(result))
-    print(result)
+    conn_options = reshift_functions.get_connection_glue(glue_client, 'vivo_postgres_production_pricing_clj')
+    jdbc_url = f"""jdbc:postgresql://{conn_options['hostname']}:{conn_options['port']}/"""
+    print(type(jdbc_url))
+    print(jdbc_url)
+
+
+
+
 
