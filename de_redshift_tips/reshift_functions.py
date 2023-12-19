@@ -112,7 +112,7 @@ def redshift_get_rows_result_query(glue_client: client, glue_connection_name: st
         result.append({a: b for a,b in zip(cols, row)})
                 
     cur.close()
-    cur.close()
+    conn.close()
     
     return result
 
@@ -124,7 +124,7 @@ def redshift_exec_query_with_commit(glue_client: client, glue_connection_name: s
     cur.execute(str_query)
     conn.commit()
     cur.close()
-    cur.close()
+    conn.close()
 
 def redshift_pg8000_exec_query_with_commit(glue_client: client, glue_connection_name: str, str_query: str, database: str = None):
     logger = logging.getLogger()
@@ -134,7 +134,7 @@ def redshift_pg8000_exec_query_with_commit(glue_client: client, glue_connection_
     cur.execute(str_query)
     conn.commit()
     cur.close()
-    cur.close()
+    conn.close()
 
 def redshift_pg8000_get_rows_result_query(glue_client: client, glue_connection_name: str, str_query: str, database: str = None) -> list:
     logger = logging.getLogger()
@@ -149,6 +149,6 @@ def redshift_pg8000_get_rows_result_query(glue_client: client, glue_connection_n
         result.append({a: b for a,b in zip(cols, row)})
                 
     cur.close()
-    cur.close()
+    conn.close()
     
     return result
